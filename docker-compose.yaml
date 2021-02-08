@@ -1,0 +1,39 @@
+---
+version: "3.7"
+services:
+  jamulus:
+    container_name: jamulus 
+    image: grundic/jamulus
+    restart: always
+    ports:
+      - "22124:22124/udp"
+    environment:
+      TZ: "America/Los_Angeles"  
+    entrypoint:
+      - "Jamulus"
+      - "--server"
+      - "--nogui"
+      - "--welcomemessage"
+      - "Welcome to the Opera on Tap Jamulus server. This server is still being developed and tested, so if you experience any issues, please let Jen know."
+      - "--numchannels"
+      - "16"
+      - "-R"
+      - "/tmp/"
+      - "--norecord"
+      - "-m"
+      - "/tmp/index.html"
+    volumes:
+      - /tmp/:/tmp
+      - /var/run/docker.sock:/tmp/docker.sock
+  jamulus-api:
+    image: ruby:2.6
+    working_dir: /api
+    command: >
+      sh -c "bundle install &&
+            apt update && apt install -y netcat-openbsd
+            bundle exec ruby jam-api.rb -o 0.0.0.0" 
+    ports:
+      - "4567:4567"
+    volumes:
+      - ./api/:/api
+      - /var/run/docker.sock:/tmp/docker.sock

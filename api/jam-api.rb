@@ -11,7 +11,19 @@ get '/enableRec' do
 end
 
 get '/sync' do
-    `do a thing to get the stuff`
-    credentials = aws.sts.client.get_token 
-    aws.s3.client.sync {credentials} file : bucket
+    client = Aws::STS::Client.new(
+  		region: 'us-east-1',
+  		Aws::InstanceProfileCredentials.new
+  		)
+    client = Aws::S3::Client.new(
+  		region: 'us-east-1',
+  		credentials: Aws::InstanceProfileCredentials.new
+		)
+    resp = client.put_object({
+  		body: "filetoupload", 
+  		bucket: "examplebucket", 
+  		key: "exampleobject", 
+		})
 end
+
+

@@ -2,6 +2,4 @@ source 'https://rubygems.org'
 
 gem 'sinatra'
 
-gem 'aws-sdk-sts'
-
 gem 'aws-sdk-s3'

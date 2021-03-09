@@ -16,7 +16,7 @@ get '/sync' do
 		)
 
 	files = Dir.glob("/tmp/*.wav")
-
+	pp files
 	files.each do |file|
 		resp = client.put_object({
   			body: file, 

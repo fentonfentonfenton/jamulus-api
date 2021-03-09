@@ -1,6 +1,5 @@
 require 'sinatra'
 require 'aws-sdk-s3'
-require 'aws-sdk-sts'
 
 get '/toggleRec' do
     `echo "POST /containers/jamulus/kill?signal=SIGUSR2 HTTP/1.0\r\n" | nc -U /tmp/docker.sock`
@@ -11,19 +10,21 @@ get '/enableRec' do
 end
 
 get '/sync' do
-    client = Aws::STS::Client.new(
-  		region: 'us-east-1',
-  		Aws::InstanceProfileCredentials.new
-  		)
-    client = Aws::S3::Client.new(
+    	client = Aws::S3::Client.new(
   		region: 'us-east-1',
   		credentials: Aws::InstanceProfileCredentials.new
 		)
-    resp = client.put_object({
-  		body: "filetoupload", 
-  		bucket: "examplebucket", 
-  		key: "exampleobject", 
-		})
+
+	files = Dir.glob("/tmp/*.wav")
+
+	files.each do |file|
+		resp = client.put_object({
+  			body: file, 
+  			bucket: "examplebucket", 
+  			key: IO.read(file), 
+			})
+		File.delete(file)
+	end
 end
 
 

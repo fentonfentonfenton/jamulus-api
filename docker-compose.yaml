@@ -37,3 +37,4 @@ services:
     volumes:
       - ./api/:/api
       - /var/run/docker.sock:/tmp/docker.sock
+      - /tmp/:/tmp

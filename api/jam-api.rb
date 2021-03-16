@@ -14,17 +14,20 @@ get '/sync' do
   		region: 'us-east-1',
   		credentials: Aws::InstanceProfileCredentials.new
 		)
-
+	
 	files = Dir.glob("/tmp/*.wav")
-	pp files
 	files.each do |file|
 		resp = client.put_object({
-  			body: file, 
-  			bucket: "examplebucket", 
-  			key: IO.read(file), 
-			})
+	  			body: IO.read(file),
+	  			bucket: "backupsmeyoueveryone", 
+	  			key: file.delete_prefix("/tmp/"), 
+				})
 		File.delete(file)
 	end
+	resp = client.list_objects_v2({
+	  bucket: "backupsmeyoueveryone", 
+	  max_keys: 25, 
+	})
+	"Hello I tried to upload #{files}! Now this is what is on s3: #{resp.contents}" 
+
 end
-
-

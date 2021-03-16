@@ -15,7 +15,7 @@ get '/sync' do
   		credentials: Aws::InstanceProfileCredentials.new
 		)
 	
-	files = Dir.glob("/tmp/*.wav")
+	files = Dir.glob("/tmp/Jam*/*.wav")
 	files.each do |file|
 		resp = client.put_object({
 	  			body: IO.read(file),
